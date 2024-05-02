@@ -15,6 +15,13 @@ let yScaleAxis;
 
 const svg = d3.select(".container")
               .append("svg")
+
+const divTooltip = d3
+            .select('body')
+            .append('div')
+            .attr('class', 'tooltip')
+            .attr('id', 'tooltip')
+            .style('opacity', 0);
               
 
 const drawSvg = ()=>{
@@ -68,7 +75,25 @@ const drawCircles = ()=>{
             }
         })
         .attr('index', (d, i) => i)
-        .on('mouseover', function(){
+        .on('mouseover', function(event, d){
+
+            divTooltip.style('opacity', 0.9);
+            divTooltip.attr('data-year', d.Year);
+            divTooltip
+              .html(
+                d.Name +
+                  ': ' +
+                  d.Nationality +
+                  '<br/>' +
+                  'Year: ' +
+                  d.Year +
+                  ', Time: ' +
+                  d.Time +
+                  (d.Doping ? '<br/><br/>' + d.Doping : '')
+              )
+              .style('left', event.pageX + 'px')
+              .style('top', event.pageY - 28 + 'px');
+
             
             var i = this.getAttribute('index');
          
@@ -80,6 +105,8 @@ const drawCircles = ()=>{
 
         })
         .on('mouseout', (d)=>{
+            divTooltip.style('opacity', 0);
+
             tooltip.transition()
                     .style('visibility', "hidden")
         })
